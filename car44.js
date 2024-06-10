@@ -27,6 +27,7 @@ const io = socketIo(server, {
 });
 
 const carsData = {}; // To store the data of all cars
+const carIndexes = {}; // To keep track of the current index for each car
 
 // Function to load data from CSV for a given carID and update carsData
 async function loadDataFromCSVCar(carID) {
@@ -38,41 +39,50 @@ async function loadDataFromCSVCar(carID) {
       .on('data', (data) => results.push(data))
       .on('end', () => {
         carsData[carID] = results;
+        carIndexes[carID] = 0; // Initialize the index for each car
         resolve();
       })
       .on('error', reject);
   });
 }
 
-// Emit location updates for all cars every 5 seconds
+// Function to emit location updates for all cars with a delay
 function startEmittingLocationUpdates() {
-  setInterval(() => {
+  const emitNextUpdate = () => {
     const updates = [];
 
     Object.keys(carsData).forEach(carID => {
       const data = carsData[carID];
-      const index = Math.floor(Math.random() * data.length); // Random index for demonstration
+      const index = carIndexes[carID];
       const entry = data[index];
-      const ass = entry['latitude,longitude'].split(',');
-      const latitude = parseFloat(ass[0]);
-      const longitude = parseFloat(ass[1]);
+      const [latitude, longitude] = entry['latitude,longitude'].split(',').map(coord => parseFloat(coord));
 
       if (!isNaN(latitude) && !isNaN(longitude)) {
+        // Introduce a slight variation in the coordinates for different cars
+        const latitudeVariation = (Math.random() - 0.5) * 0.0001; // Variation within +/- 0.00005
+        const longitudeVariation = (Math.random() - 0.5) * 0.0001; // Variation within +/- 0.00005
+
         const newEntry = {
           carId: carID,
-          latitude: latitude.toFixed(6),
-          longitude: longitude.toFixed(6),
+          latitude: (latitude + latitudeVariation).toFixed(6),
+          longitude: (longitude + longitudeVariation).toFixed(6),
           timestamp: new Date()
         };
         updates.push(newEntry);
       }
+
+      // Update the index for the next iteration
+      carIndexes[carID] = (index + 1) % data.length;
     });
 
     if (updates.length > 0) {
       io.emit('locationUpdate', updates);
-      console.log('Emitted data:', updates);
     }
-  }, 2000); // Emit data every 5 seconds
+
+    setTimeout(emitNextUpdate, 2000); // Delay before emitting the next update
+  };
+
+  emitNextUpdate();
 }
 
 app.post('/sos', (request, response) => {
@@ -99,7 +109,7 @@ server.listen(5000, async () => {
     await loadDataFromCSVCar(44);
     await loadDataFromCSVCar(63);
     await loadDataFromCSVCar(4);
-    
+
     startEmittingLocationUpdates();
   } catch (error) {
     console.error(error);
