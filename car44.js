@@ -49,24 +49,33 @@ server.listen(5000, async () => {
     //   database = mongoClient.db("myapp");
     //   collection = database.collection("mycollection");
       console.log("Listening at :5000");
-      loadDataFromCSVCar1();
-        await delay();
-      loadDataFromCSVCar2();
+      loadDataFromCSVCar(1);
+      await delay(2000)
+      loadDataFromCSVCar(7);
+      await delay(2000)
+      loadDataFromCSVCar(27);
+      await delay(2000)
+      loadDataFromCSVCar(44);
+      await delay(2000)
+      loadDataFromCSVCar(63);
+      await delay(2000)
+      loadDataFromCSVCar(4);
+      await delay(2000)
     } catch (error) {
       console.error(error);
     }
   });
 
-async function delay() {
+async function delay(delay_ms) {
     return new Promise(resolve => { 
-        setTimeout(() => { resolve('') }, 8000); 
+        setTimeout(() => { resolve('') }, delay_ms); 
     }) 
 }
 // Load data from CSV and emit via Socket.IO
-async function loadDataFromCSVCar1() {
+async function loadDataFromCSVCar(carID) {
     const results = [];
   
-    fs.createReadStream('Silverstone.csv')
+    fs.createReadStream('race.csv')
       .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
       .on('data', (data) => results.push(data))
       .on('end', () => {
@@ -82,7 +91,7 @@ async function loadDataFromCSVCar1() {
   
           // Check if latitude and longitude are valid numbers
           if (!isNaN(latitude) && !isNaN(longitude)) {
-            const carId = 44; // Generate a car ID based on the index
+            const carId = carID; // Generate a car ID based on the index
             const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
   
             try {
@@ -98,43 +107,5 @@ async function loadDataFromCSVCar1() {
   
           index++;
         }, 1000); // Emit data every second
-      });
-  }
-// Load data from CSV and emit via Socket.IO
-async function loadDataFromCSVCar2() {
-    const results = [];
-  
-    fs.createReadStream('Silverstone.csv')
-      .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
-      .on('data', (data) => results.push(data))
-      .on('end', () => {
-        let index = 1; // Start from the second row
-  
-        setInterval(async () => {
-          if (index >= results.length) index = 1; // Loop back to the start of the data
-  
-          const entry = results[index];
-          const ass = entry['latitude,longitude'].split(',');
-          const latitude = parseFloat(ass[0]);
-          const longitude = parseFloat(ass[1]);
-  
-          // Check if latitude and longitude are valid numbers
-          if (!isNaN(latitude) && !isNaN(longitude)) {
-            const carId = 1; // Generate a car ID based on the index
-            const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
-  
-            try {
-            //   await collection.insertOne(newEntry);
-              io.emit('locationUpdate', newEntry);
-              console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
-            } catch (error) {
-              console.error('Error saving data to MongoDB', error);
-            }
-          } else {
-            console.error('Invalid latitude or longitude value');
-          }
-  
-          index++;
-        }, 10000); // Emit data every second
       });
   }
