@@ -20,7 +20,7 @@ app.use(Express.json()); // Middleware to parse JSON bodies
 
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:3000', // Allow only your frontend origin
+    origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app/'], // Allow only your frontend origin
     methods: ['GET', 'POST'],
     credentials: true,
   },
