@@ -9,7 +9,7 @@ const app = Express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow only your frontend origin
+  origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app'], // Allow only your frontend origin
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
