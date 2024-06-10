@@ -82,7 +82,7 @@ async function loadDataFromCSVCar1() {
   
           // Check if latitude and longitude are valid numbers
           if (!isNaN(latitude) && !isNaN(longitude)) {
-            const carId = `Car44`; // Generate a car ID based on the index
+            const carId = 44; // Generate a car ID based on the index
             const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
   
             try {
@@ -120,7 +120,7 @@ async function loadDataFromCSVCar2() {
   
           // Check if latitude and longitude are valid numbers
           if (!isNaN(latitude) && !isNaN(longitude)) {
-            const carId = `Car1`; // Generate a car ID based on the index
+            const carId = `Car-1`; // Generate a car ID based on the index
             const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
   
             try {
@@ -135,6 +135,6 @@ async function loadDataFromCSVCar2() {
           }
   
           index++;
-        }, 1000); // Emit data every second
+        }, 10000); // Emit data every second
       });
   }
