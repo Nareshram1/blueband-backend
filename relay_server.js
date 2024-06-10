@@ -20,6 +20,12 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Use CORS middleware
 app.use(Express.json()); // Middleware to parse JSON bodies
 
+async function delay() {
+  return new Promise(resolve => { 
+      setTimeout(() => { resolve('') }, 500); 
+  }) 
+}
+
 // Configure CORS for Socket.IO
 const io = socketIo(server, {
   cors: {
@@ -66,6 +72,9 @@ server.listen(5000, async () => {
     collection = database.collection("mycollection");
     console.log("Listening at :5000");
     loadDataFromCSV();
+    await delay();
+    loadDataFromCSV2();
+    
   } catch (error) {
     console.error(error);
   }
@@ -91,15 +100,56 @@ function loadDataFromCSV() {
 
         // Check if latitude and longitude are valid numbers
         if (!isNaN(latitude) && !isNaN(longitude)) {
-          const carId = `Car-1`; // Generate a car ID based on the index
+          const carId = 1; // Generate a car ID based on the index
           const status = "offline";
           const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
-          const newEntry1 = { carId:'Car-2', latitude: latitude.toFixed(6)-0.00005, longitude: longitude.toFixed(6)-0.00005, timestamp: new Date() };
+        
 
           try {
             // await collection.insertOne(newEntry);
             io.emit('locationUpdate', newEntry);
-            io.emit('locationUpdate', newEntry1);
+            
+            console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
+          } catch (error) {
+            console.error('Error saving data to MongoDB', error);
+          }
+        } else {
+          console.error('Invalid latitude or longitude value');
+        }
+
+        index++;
+      }, 1000); // Emit data every second
+    });
+}
+
+function loadDataFromCSV2() {
+  const results = [];
+
+  fs.createReadStream('race.csv')
+    .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
+    .on('data', (data) => results.push(data))
+    .on('end', () => {
+      let index = 1; // Start from the second row
+
+      setInterval(async () => {
+        if (index >= results.length) index = 1; // Loop back to the start of the data
+
+        const entry = results[index];
+        const ass = entry['latitude,longitude'].split(',');
+        const latitude = parseFloat(ass[0]);
+        const longitude = parseFloat(ass[1]);
+
+        // Check if latitude and longitude are valid numbers
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+          const carId = 2; // Generate a car ID based on the index
+          const status = "offline";
+          const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
+          
+
+          try {
+            // await collection.insertOne(newEntry);
+            io.emit('locationUpdate', newEntry);
+           
             console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
           } catch (error) {
             console.error('Error saving data to MongoDB', error);

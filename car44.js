@@ -49,9 +49,12 @@ server.listen(5000, async () => {
     //   database = mongoClient.db("myapp");
     //   collection = database.collection("mycollection");
       console.log("Listening at :5000");
-      loadDataFromCSVCar1();
-        await delay();
-      loadDataFromCSVCar2();
+      await loadDataFromCSVCar1();
+     
+      await loadDataFromCSVCar2();
+     
+      await loadDataFromCSVCar3();
+
     } catch (error) {
       console.error(error);
     }
@@ -59,14 +62,14 @@ server.listen(5000, async () => {
 
 async function delay() {
     return new Promise(resolve => { 
-        setTimeout(() => { resolve('') }, 8000); 
+        setTimeout(() => { resolve('') }, 500); 
     }) 
 }
 // Load data from CSV and emit via Socket.IO
 async function loadDataFromCSVCar1() {
     const results = [];
   
-    fs.createReadStream('Silverstone.csv')
+    fs.createReadStream('race.csv')
       .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
       .on('data', (data) => results.push(data))
       .on('end', () => {
@@ -87,7 +90,7 @@ async function loadDataFromCSVCar1() {
   
             try {
             //   await collection.insertOne(newEntry);
-              io.emit('locationUpdate', newEntry);
+               io.emit('locationUpdate', newEntry);
               console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
             } catch (error) {
               console.error('Error saving data to MongoDB', error);
@@ -104,7 +107,7 @@ async function loadDataFromCSVCar1() {
 async function loadDataFromCSVCar2() {
     const results = [];
   
-    fs.createReadStream('Silverstone.csv')
+    fs.createReadStream('race.csv')
       .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
       .on('data', (data) => results.push(data))
       .on('end', () => {
@@ -120,12 +123,51 @@ async function loadDataFromCSVCar2() {
   
           // Check if latitude and longitude are valid numbers
           if (!isNaN(latitude) && !isNaN(longitude)) {
-            const carId = `Car-1`; // Generate a car ID based on the index
+            const carId = 2; // Generate a car ID based on the index
             const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
   
             try {
             //   await collection.insertOne(newEntry);
-              io.emit('locationUpdate', newEntry);
+               io.emit('locationUpdate', newEntry);
+              console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
+            } catch (error) {
+              console.error('Error saving data to MongoDB', error);
+            }
+          } else {
+            console.error('Invalid latitude or longitude value');
+          }
+  
+          index++;
+        }, 10000); // Emit data every second
+      });
+  }
+
+
+  async function loadDataFromCSVCar3() {
+    const results = [];
+  
+    fs.createReadStream('race.csv')
+      .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
+      .on('data', (data) => results.push(data))
+      .on('end', () => {
+        let index = 1; // Start from the second row
+  
+        setInterval(async () => {
+          if (index >= results.length) index = 1; // Loop back to the start of the data
+  
+          const entry = results[index];
+          const ass = entry['latitude,longitude'].split(',');
+          const latitude = parseFloat(ass[0]);
+          const longitude = parseFloat(ass[1]);
+  
+          // Check if latitude and longitude are valid numbers
+          if (!isNaN(latitude) && !isNaN(longitude)) {
+            const carId = 3; // Generate a car ID based on the index
+            const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
+            
+            try {
+            //   await collection.insertOne(newEntry);
+               io.emit('locationUpdate', newEntry);
               console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
             } catch (error) {
               console.error('Error saving data to MongoDB', error);
