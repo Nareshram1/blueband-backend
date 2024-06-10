@@ -75,7 +75,7 @@ server.listen(5000, async () => {
 function loadDataFromCSV() {
   const results = [];
 
-  fs.createReadStream('Silverstone.csv')
+  fs.createReadStream('race.csv')
     .pipe(csv({ separator: '\t' })) // Specify tab as the delimiter
     .on('data', (data) => results.push(data))
     .on('end', () => {
@@ -92,11 +92,14 @@ function loadDataFromCSV() {
         // Check if latitude and longitude are valid numbers
         if (!isNaN(latitude) && !isNaN(longitude)) {
           const carId = `Car-1`; // Generate a car ID based on the index
+          const status = "offline";
           const newEntry = { carId, latitude: latitude.toFixed(6), longitude: longitude.toFixed(6), timestamp: new Date() };
+          const newEntry1 = { carId:'Car-2', latitude: latitude.toFixed(6)-0.00005, longitude: longitude.toFixed(6)-0.00005, timestamp: new Date() };
 
           try {
-            await collection.insertOne(newEntry);
+            // await collection.insertOne(newEntry);
             io.emit('locationUpdate', newEntry);
+            io.emit('locationUpdate', newEntry1);
             console.log(`Emitted data: Car ID ${carId}, Lat ${latitude}, Long ${longitude}`);
           } catch (error) {
             console.error('Error saving data to MongoDB', error);
