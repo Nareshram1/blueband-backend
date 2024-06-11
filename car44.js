@@ -9,7 +9,7 @@ const app = Express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app'], // Allow only your frontend origin
+  origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app',"https://adya-flix.vercel.app","http://localhost:5173"], // Allow only your frontend origin
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
@@ -20,7 +20,7 @@ app.use(Express.json()); // Middleware to parse JSON bodies
 
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app'], // Allow only your frontend origin
+    origin: ['http://localhost:3000', 'https://blueband-frontend.vercel.app',"https://adya-flix.vercel.app","http://localhost:5173"], // Allow only your frontend origin
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -84,6 +84,19 @@ function startEmittingLocationUpdates() {
 
   emitNextUpdate();
 }
+
+app.post('/track',(request,response)=>{
+   try{
+    const {carId,latitude,longitude} = request.body;
+    const record = {carId,latitude,longitude}
+    io.emit('locationUpdate', [record]);
+    console.log(record)
+    response.status(200).json({msg:"Location updated successfully"})
+   }
+   catch(err){
+      response.status(400).json({msg:"Internal Server Error"})
+   }
+})
 
 app.post('/sos', (request, response) => {
   const { carId, message } = request.body;
