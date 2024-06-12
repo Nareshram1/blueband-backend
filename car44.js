@@ -88,12 +88,14 @@ function startEmittingLocationUpdates() {
 
 app.post('/track',(request,response)=>{
    try{
-    // Extract the last three digits of the IPv4 address
-    const ip = request.ip;
-    console.log('ip',ip)
+    let ip = request.ip;
+    if (ip.startsWith('::ffff:')) {
+      ip = ip.split(':').pop(); // Handle IPv4-mapped IPv6 addresses
+    } else if (ip === '::1') {
+      ip = '127.0.0.1'; // Handle IPv6 loopback address
+    }
     const ipParts = ip.split('.');
-    const carId = ipParts[ipParts.length - 1]; 
-    console.log('e-ID',carId)
+    const carId = ipParts[ipParts.length - 1];
     const {latitude,longitude} = request.body;
     const record = {carId,latitude,longitude}
     console.log(record)
