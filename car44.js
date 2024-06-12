@@ -76,6 +76,7 @@ function startEmittingLocationUpdates() {
     });
 
     if (updates.length > 0) {
+      // console.log('updates',updates)
       io.emit('locationUpdate', updates);
     }
 
@@ -87,8 +88,15 @@ function startEmittingLocationUpdates() {
 
 app.post('/track',(request,response)=>{
    try{
-    const {carId,latitude,longitude} = request.body;
+    // Extract the last three digits of the IPv4 address
+    const ip = request.ip;
+    console.log('ip',ip)
+    const ipParts = ip.split('.');
+    const carId = ipParts[ipParts.length - 1]; 
+    console.log('e-ID',carId)
+    const {latitude,longitude} = request.body;
     const record = {carId,latitude,longitude}
+    console.log(record)
     io.emit('locationUpdate', [record]);
     console.log(record)
     response.status(200).json({msg:"Location updated successfully"})
