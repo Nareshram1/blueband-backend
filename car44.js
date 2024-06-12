@@ -88,7 +88,9 @@ function startEmittingLocationUpdates() {
 app.post('/track',(request,response)=>{
    try{
     const {carId,latitude,longitude} = request.body;
-    const record = {carId,latitude,longitude}
+    const split_ip=carId.split('.')
+    const extracted_ip=parseInt(split_ip[split_ip.length-1])
+    const record = {extracted_ip,latitude,longitude}
     io.emit('locationUpdate', [record]);
     console.log(record)
     response.status(200).json({msg:"Location updated successfully"})
