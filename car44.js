@@ -76,7 +76,6 @@ function startEmittingLocationUpdates() {
     });
 
     if (updates.length > 0) {
-      // console.log('updates',updates)
       io.emit('locationUpdate', updates);
     }
 
@@ -88,17 +87,8 @@ function startEmittingLocationUpdates() {
 
 app.post('/track',(request,response)=>{
    try{
-    let ip = request.ip;
-    if (ip.startsWith('::ffff:')) {
-      ip = ip.split(':').pop(); // Handle IPv4-mapped IPv6 addresses
-    } else if (ip === '::1') {
-      ip = '127.0.0.1'; // Handle IPv6 loopback address
-    }
-    const ipParts = ip.split('.');
-    const carId = ipParts[ipParts.length - 1];
-    const {latitude,longitude} = request.body;
+    const {carId,latitude,longitude} = request.body;
     const record = {carId,latitude,longitude}
-    console.log(record)
     io.emit('locationUpdate', [record]);
     console.log(record)
     response.status(200).json({msg:"Location updated successfully"})
