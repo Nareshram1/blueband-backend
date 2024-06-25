@@ -12,7 +12,8 @@ const corsOptions = {
     'https://blueband-frontend.vercel.app',
     "https://adya-flix.vercel.app",
     "http://localhost:5173",
-    "http://localhost:4173"
+    "http://localhost:4173",
+    "*"
   ], // Allow only your frontend origin
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -29,7 +30,8 @@ const io = socketIo(server, {
       'https://blueband-frontend.vercel.app',
       "https://adya-flix.vercel.app",
       "http://localhost:5173",
-      "http://localhost:4173"
+      "http://localhost:4173",
+      "*",
     ], // Allow only your frontend origin
     methods: ['GET', 'POST'],
     credentials: true,
