@@ -8,11 +8,12 @@ const server = http.createServer(app);
 
 const corsOptions = {
   origin: [
-    // 'http://localhost:3000',
-    // 'https://blueband-frontend.vercel.app',
-    // "https://adya-flix.vercel.app",
-    // "http://localhost:5173",
-    // "http://localhost:4173",
+    "*",
+    'http://localhost:3000',
+    'https://blueband-frontend.vercel.app',
+    "https://adya-flix.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:4173",
     "*"
   ], // Allow only your frontend origin
   methods: ['GET', 'POST'],
@@ -26,12 +27,12 @@ app.use(Express.json()); // Middleware to parse JSON bodies
 const io = socketIo(server, {
   cors: {
     origin: [
-      // 'http://localhost:3000',
-      // 'https://blueband-frontend.vercel.app',
-      // "https://adya-flix.vercel.app",
-      // "http://localhost:5173",
-      // "http://localhost:4173",
       "*",
+      'http://localhost:3000',
+      'https://blueband-frontend.vercel.app',
+      "https://adya-flix.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:4173",
     ], // Allow only your frontend origin
     methods: ['GET', 'POST'],
     credentials: true,
