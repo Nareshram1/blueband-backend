@@ -54,6 +54,10 @@ app.post('/track', (request, response) => {
   }
 });
 
+app.post("/test",(req,res)=>{
+  console.log(`DATA FROM HW--->>>>>>>>${JSON.stringify(req.body)}<<<<<<<<<----`)
+})
+
 app.post('/sos', (request, response) => {
   const { carId, message } = request.body;
   const sosMessage = { carId, message, timestamp: new Date() };
