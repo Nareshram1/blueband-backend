@@ -49,7 +49,7 @@ app.post('/test', (req, res) => {
     // Example: Emitting data via Socket.IO
     // io.emit('sensorData', dataRecord);
 
-    console.log('Received data from SIM7600E-H:',req.body, dataRecord);
+    console.log('Received data from SIM7600E-H:',req.body);
     res.status(200).json({ msg: "Data received successfully" });
   } catch (err) {
     console.error('Error handling data:', err);
