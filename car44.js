@@ -39,6 +39,25 @@ const io = socketIo(server, {
   },
 });
 
+
+// Endpoint to receive data from SIM7600E-H module
+app.post('/test', (req, res) => {
+  try {
+    // const { sensor, value } = req.body; // Adjust according to your JSON structure
+    // const dataRecord = { sensor, value };
+
+    // Example: Emitting data via Socket.IO
+    // io.emit('sensorData', dataRecord);
+
+    console.log('Received data from SIM7600E-H:',req.body, dataRecord);
+    res.status(200).json({ msg: "Data received successfully" });
+  } catch (err) {
+    console.error('Error handling data:', err);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+});
+
+
 app.post('/track', (request, response) => {
   try {
     const { carId, latitude, longitude } = request.body;
