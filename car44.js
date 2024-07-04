@@ -2,6 +2,7 @@ const Express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const cors = require('cors');
+const axios = require('axios');
 
 const app = Express();
 const server = http.createServer(app);
@@ -23,21 +24,34 @@ const io = socketIo(server, {
 });
 
 // Endpoint to receive data from SIM7600E-H module
-app.post('/test', (req, res) => {
+app.post('/test', async (req, res) => {
   try {
+    // Log received data from SIM7600E-H
     console.log('Received data from SIM7600E-H:', req.body);
-    res.status(200).send('Data received board.');
+    const {latitude,longitude} = req.body
+    // just temp have to work on it
+    const otherEndpoint = 'https://blueband-backend.onrender.com/track';
+    const dataToSend = {"carId":44,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
+
+    // Make a POST request to another endpoint
+    const response = await axios.post(otherEndpoint, dataToSend);
+
+    // Log response from the other endpoint
+    console.log('Response from other endpoint:', response.data);
+
+    // Respond to the SIM7600E-H module with a success message
+    res.status(200).send('Data received and forwarded successfully.');
   } catch (err) {
     console.error('Error handling data:', err);
     res.status(500).json({ msg: "Internal Server Error" });
   }
 });
 
-app.get('/test', (req, res) => {
-  const { latitude, longitude } = req.query;
-  console.log(latitude, longitude);
-  res.send('Data received board.');
-});
+// app.get('/test', (req, res) => {
+//   const { latitude, longitude } = req.query;
+//   console.log(latitude, longitude);
+//   res.send('Data received board.');
+// });
 
 app.post('/track', (request, response) => {
   try {
