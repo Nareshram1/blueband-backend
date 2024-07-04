@@ -16,6 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Use CORS middleware
 app.use(Express.json()); // Middleware to parse JSON bodies
 
+
 const io = socketIo(server, {
   cors: {
     origin: "*",
