@@ -8,9 +8,8 @@ const server = http.createServer(app);
 
 const corsOptions = {
   origin: "*",
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false, // Set to false because credentials can't be true with wildcard origin
+  methods: ['GET', 'POST'], // Set to false because credentials can't be true with wildcard origin
+  credentials: true
 };
 
 app.use(cors(corsOptions)); // Use CORS middleware
@@ -20,8 +19,8 @@ app.use(Express.json()); // Middleware to parse JSON bodies
 const io = socketIo(server, {
   cors: {
     origin: "*",
-    methods: ['GET', 'POST'],
-    credentials: false, // Set to false because credentials can't be true with wildcard origin
+    methods: ['GET', 'POST'], // Set to false because credentials can't be true with wildcard origin
+    credentials: true
   },
 });
 
