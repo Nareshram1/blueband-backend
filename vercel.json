@@ -3,9 +3,7 @@
     "builds": [
       { "src": "car44.js", "use": "@vercel/node" }
     ],
-    "routes": [
-      { "src": "/(.*)", "dest": "car44.js" }
-    ],
+    "rewrites": [{ "source": "/(.*)", "destination": "car44.js" }],
     "headers": [
       {
         "source": "/(.*)",
