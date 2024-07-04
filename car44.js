@@ -7,10 +7,14 @@ const app = Express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: "*",
+  origin: [ 
+    "*",
+    "http://localhost:3000",
+    "https://blueband-frontend.vercel.app"
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  credentials: false, // Allow credentials (cookies, authorization headers, etc.)
 };
 
 app.use(cors(corsOptions)); // Use CORS middleware
@@ -18,12 +22,13 @@ app.use(Express.json()); // Middleware to parse JSON bodies
 
 const io = socketIo(server, {
   cors: {
-    origin:[ "*",
+    origin:[ 
+      "*",
       "http://localhost:3000",
-      "http://blueband-frontend.vercel.app"
+      "https://blueband-frontend.vercel.app"
     ], // Allow only your frontend origin
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: false,
   },
 });
 
