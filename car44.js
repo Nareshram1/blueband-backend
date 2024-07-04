@@ -50,7 +50,7 @@ app.post('/test', (req, res) => {
     // io.emit('sensorData', dataRecord);
 
     console.log('Received data from SIM7600E-H:',req.body);
-    res.status(200).json({ msg: "Data received successfully" });
+    res.status(200).send('Data received board.');
   } catch (err) {
     console.error('Error handling data:', err);
     res.status(500).json({ msg: "Internal Server Error" });
