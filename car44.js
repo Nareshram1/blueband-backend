@@ -57,6 +57,16 @@ app.post('/test', (req, res) => {
   }
 });
 
+app.get('/test',(req,res)=>{
+  if(req)
+  {
+    console.log("DATA CAME Finally!");
+  }
+  const {latitude,longitude} = req.query;
+  console.log(latitude,longitude);
+  res.send('Data received board.');
+})
+
 
 app.post('/track', (request, response) => {
   try {
