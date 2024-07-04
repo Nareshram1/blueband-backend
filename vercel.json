@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "car44.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "car44.js" }
+    ]
+  }
+  
