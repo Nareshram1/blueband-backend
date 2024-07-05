@@ -7,6 +7,90 @@ const axios = require('axios');
 const app = Express();
 const server = http.createServer(app);
 
+function convertToDecimal(degreeString, direction) {
+  const degreeLength = direction === 'N' || direction === 'S' ? 2 : 3;
+  const degrees = parseInt(degreeString.slice(0, degreeLength));
+  const minutes = parseFloat(degreeString.slice(degreeLength));
+  let decimal = degrees + (minutes / 60);
+
+  if (direction === 'S' || direction === 'W') {
+    decimal = -decimal;
+  }
+
+  return decimal;
+}
+
+function parseDate(dateString) {
+  const day = dateString.slice(0, 2);
+  const month = dateString.slice(2, 4);
+  const year = dateString.slice(4, 6);
+  return `20${year}-${month}-${day}`;
+}
+
+function parseTime(timeString) {
+  const hours = timeString.slice(0, 2);
+  const minutes = timeString.slice(2, 4);
+  const seconds = timeString.slice(4);
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function isValidNMEA(parts) {
+  if (parts.length < 9) {
+    return false;
+  }
+
+  const [rawLat, latDirection, rawLon, lonDirection, date, time] = parts;
+
+  if (!rawLat || !latDirection || !rawLon || !lonDirection || !date || !time) {
+    return false;
+  }
+
+  if (!/^\d{2}\d+\.\d+$/.test(rawLat) || !/^[NS]$/.test(latDirection)) {
+    return false;
+  }
+
+  if (!/^\d{3}\d+\.\d+$/.test(rawLon) || !/^[EW]$/.test(lonDirection)) {
+    return false;
+  }
+
+  if (!/^\d{6}$/.test(date) || !/^\d{6}\.\d$/.test(time)) {
+    return false;
+  }
+
+  return true;
+}
+
+function parseData(data) {
+  const parts = data.split(',');
+
+  if (!isValidNMEA(parts)) {
+    console.warn('Invalid NMEA data');
+    return null;
+  }
+
+  const rawLat = parts[0];
+  const latDirection = parts[1];
+  const rawLon = parts[2];
+  const lonDirection = parts[3];
+  const date = parts[4];
+  const time = parts[5];
+  const altitude = parseFloat(parts[6]);
+  const speed = parseFloat(parts[7]);
+  const course = parseFloat(parts[8]);
+
+  const latitude = convertToDecimal(rawLat, latDirection);
+  const longitude = convertToDecimal(rawLon, lonDirection);
+
+  return {
+    latitude,
+    longitude,
+    date: parseDate(date),
+    time: parseTime(time),
+    altitude,
+    speed,
+    course
+  };
+}
 const corsOptions = {
   origin: "*",
   methods: ['GET', 'POST']
@@ -28,10 +112,14 @@ app.post('/test', async (req, res) => {
   try {
     // Log received data from SIM7600E-H
     console.log('Received data from SIM7600E-H:', req.body);
-    // const {carId,latitude,longitude} = req.body
+
+    const {nmea} = req.body
+    const {latitude,longitude} = parseData(nmea);
+    console.log('Latitude:', latitude);
+    console.log('Longitude:', longitude);
     // // just temp have to work on it
     // const otherEndpoint = 'https://blueband-backend.onrender.com/track';
-    // const dataToSend = {"carId":carId,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
+    // const dataToSend = {"carId":44,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
 
     // // Make a POST request to another endpoint
     // const response = await axios.post(otherEndpoint, dataToSend);
