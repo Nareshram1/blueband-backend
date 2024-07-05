@@ -28,16 +28,16 @@ app.post('/test', async (req, res) => {
   try {
     // Log received data from SIM7600E-H
     console.log('Received data from SIM7600E-H:', req.body);
-    const {carId,latitude,longitude} = req.body
-    // just temp have to work on it
-    const otherEndpoint = 'https://blueband-backend.onrender.com/track';
-    const dataToSend = {"carId":carId,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
+    // const {carId,latitude,longitude} = req.body
+    // // just temp have to work on it
+    // const otherEndpoint = 'https://blueband-backend.onrender.com/track';
+    // const dataToSend = {"carId":carId,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
 
-    // Make a POST request to another endpoint
-    const response = await axios.post(otherEndpoint, dataToSend);
+    // // Make a POST request to another endpoint
+    // const response = await axios.post(otherEndpoint, dataToSend);
 
-    // Log response from the other endpoint
-    console.log('Response from other endpoint:', response.data);
+    // // Log response from the other endpoint
+    // console.log('Response from other endpoint:', response.data);
 
     // Respond to the SIM7600E-H module with a success message
     res.status(200).send('Data received and forwarded successfully.');
@@ -95,7 +95,7 @@ app.post("/test", (req, res) => {
 app.post('/sos', (request, response) => {
   const { carId, message } = request.body;
   const sosMessage = { carId, message, timestamp: new Date() };
-
+  
   io.emit('sos', sosMessage);
   response.status(200).send({ message: 'SOS alert sent successfully' });
 });
