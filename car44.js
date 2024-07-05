@@ -118,14 +118,14 @@ app.post('/test', async (req, res) => {
     console.log('Latitude:', latitude);
     console.log('Longitude:', longitude);
     // // just temp have to work on it
-    // const otherEndpoint = 'https://blueband-backend.onrender.com/track';
-    // const dataToSend = {"carId":44,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
+    const otherEndpoint = 'https://blueband-backend.onrender.com/track';
+    const dataToSend = {"carId":44,"latitude":latitude,"longitude":longitude}; // Assuming you want to send the same data
 
     // // Make a POST request to another endpoint
-    // const response = await axios.post(otherEndpoint, dataToSend);
+    const response = await axios.post(otherEndpoint, dataToSend);
 
     // // Log response from the other endpoint
-    // console.log('Response from other endpoint:', response.data);
+    console.log('Response from other endpoint:', response.data);
 
     // Respond to the SIM7600E-H module with a success message
     res.status(200).send('Data received and forwarded successfully.');
