@@ -183,7 +183,7 @@ app.post("/test", (req, res) => {
 app.post('/sos', (request, response) => {
   const { carId, message } = request.body;
   const sosMessage = { carId, message, timestamp: new Date() };
-  
+  console.log('sos--',carId,message)
   io.emit('sos', sosMessage);
   response.status(200).send({ message: 'SOS alert sent successfully' });
 });
@@ -192,10 +192,10 @@ app.post('/ok', (request, response) => {
   const { carId, message } = request.body;
   const okMessage = { carId, message, timeStamp: new Date() };
   io.emit("ok", [okMessage]);
-  console.log("OK status updated", carId);
-  response.status(200).send([{ okMessage, message: `OK status updated ${carId}` }]);
+  console.log("OK status updated--", carId);
+  response.status(200).send({ message: `OK status updated car: ${carId}` });
 });
 
 server.listen(5000, () => {
-  console.log("Listening at :443");
+  console.log("Listening at :5000");
 });
