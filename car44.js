@@ -182,6 +182,7 @@ app.post("/test", (req, res) => {
 
 app.post('/sos', (request, response) => {
   const { carId, message } = request.body;
+  console.log(request.body);
   const sosMessage = { carId, message, timestamp: new Date() };
   console.log('sos--',carId,message)
   io.emit('sos', sosMessage);
@@ -192,6 +193,7 @@ app.post('/ok', (request, response) => {
   const { carId, message } = request.body;
   const okMessage = { carId, message, timeStamp: new Date() };
   io.emit("ok", [okMessage]);
+  console.log(request.body);
   console.log("OK status updated--", carId);
   response.status(200).send({ message: `OK status updated car: ${carId}` });
 });
