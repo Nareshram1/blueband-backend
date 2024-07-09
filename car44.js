@@ -140,8 +140,8 @@ app.post('/track', (req, res) => {
     console.log('Received data from SIM7600E-H:', req.body);
 
     const {nmea,carId} = req.body
-    const {latitude,longitude} = parseData(nmea);
-    const record = { carId, latitude, longitude };
+    const {latitude,longitude,speed} = parseData(nmea);
+    const record = { carId, latitude, longitude, speed };
 
     if (typeof carId === 'undefined') {
       res.status(400).json({ msg: "CarID Undefined" });
