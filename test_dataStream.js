@@ -24,14 +24,15 @@ let carData=[];
 // ];
 for(var i=1;i<=15;i++)
 {
-  const data={carId:i,nmea:'1106.071038,N,07658.135577,E,040724,164237.0,446.8,0.0,0.0'}
+  const data={carId:i,nmea:'1106.071038,N,07658.135577,E,040724,164237.0,446.8,'+i+'.'+i+',0.0'}
   carData.push(data);
 }
 
 // Initial data for two cars
 console.log(carData);
 // Endpoint URL
-const endpoint = 'https://blueband-server-zr7gm6w4cq-el.a.run.app/track';
+const endpoint = 'http://localhost:5000/track';
+// const endpoint = 'https://blueband-server-zr7gm6w4cq-el.a.run.app/track';
 // const endpoint = 'http://localhost:5000/track';
 
 // Function to send data
