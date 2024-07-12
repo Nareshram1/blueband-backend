@@ -5,8 +5,8 @@ const io = require('socket.io')(http);
 const dgram = require('dgram');
 
 // Configure UDP server address and port
-const UDP_PORT = 8080;  // UDP port number, match this with your Maduino setup
-
+const UDP_PORT = process.env.PORT || 8080;  // UDP port number, match this with your Maduino setup
+const port = process.env.PORT || 3000
 // Create a UDP socket
 const udpServer = dgram.createSocket('udp4');
 
@@ -25,7 +25,8 @@ udpServer.on('message', (msg, rinfo) => {
 
 // Express route to serve HTML with Socket.IO client script
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  console.log("/ request.");
+  res.send("ok")
 });
 
 // Socket.IO connection handler
@@ -45,6 +46,6 @@ io.on('connection', (socket) => {
 });
 
 // Start HTTP server
-http.listen(3000, () => {
-  console.log('HTTP server is listening on :3000');
+http.listen(port, () => {
+  console.log(`HTTP server is listening on :${port}`);
 });
